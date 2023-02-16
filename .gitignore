@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-./td_read
+td_read
 
 # Test binary, built with `go test -c`
 *.test
