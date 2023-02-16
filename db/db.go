@@ -16,14 +16,7 @@ var (
 )
 
 func CreateTables() error {
-	config := model.Config{
-		Host: "127.0.0.1",
-		Port: "5432",
-		User: "postgres",
-		Pass: "mysecretpassword",
-	}
-
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", model.GlobalConfig.Postgres.Host, model.GlobalConfig.Postgres.Port, model.GlobalConfig.Postgres.User, model.GlobalConfig.Postgres.Pass)
 	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -37,7 +30,7 @@ func CreateTables() error {
 
 	// 实际建库 + 1，用于处理异常情况，虽然可能性几乎没有
 	for i := 0; i < index+1; i++ {
-		createDatabaseCommand := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
+		createDatabaseCommand := fmt.Sprintf("CREATE DATABASE %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
 		DB.Exec(createDatabaseCommand)
 	}
 
