@@ -37,6 +37,10 @@ func CreateTables() error {
 	return nil
 }
 
+func CheckTables() error {
+	return nil
+}
+
 func getDbIndex(meta string) int {
 	if strings.Contains(db_token, meta) {
 		return strings.Index(db_token, meta) % 6

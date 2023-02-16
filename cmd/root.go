@@ -10,6 +10,7 @@ import (
 )
 
 var cfgFile string
+var action string
 
 var rootCmd = &cobra.Command{
 	Use:   "TdRead",
@@ -22,7 +23,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/config.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $PWD/config.yaml)")
 }
 
 func initConfig() {
