@@ -41,7 +41,7 @@ func TestDropDatabase(t *testing.T) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
 	DB, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i <= 6; i++ {
 		createDatabaseCommand := fmt.Sprintf("DROP DATABASE IF EXISTS %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
 		DB.Exec(createDatabaseCommand)
 	}

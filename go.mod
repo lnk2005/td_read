@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/spf13/viper v1.15.0
 	gorm.io/driver/postgres v1.4.7
-	gorm.io/gorm v1.24.2
+	gorm.io/gorm v1.24.5
 )
 
 require (
