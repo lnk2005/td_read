@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	READER_NUM = 200
+	READER_NUM = 2000
 	WRITER_NUM = 6
 )
 

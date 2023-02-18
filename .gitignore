@@ -16,3 +16,5 @@ td_read
 vendor/
 
 .vscode
+
+log

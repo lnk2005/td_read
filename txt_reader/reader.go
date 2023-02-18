@@ -12,6 +12,14 @@ import (
 	"github.com/lnk2005/td_read/model"
 )
 
+var (
+	EmailToken      = "Email: "
+	NameToken       = " - Name: "
+	ScreenNameToken = " - ScreenName: "
+	FollowersToken  = " - Followers: "
+	CreatedToken    = " - Created At: "
+)
+
 type Reader struct {
 	Source *chan string
 	Send   []*chan *model.UserInfo
@@ -39,31 +47,25 @@ func (r *Reader) Read(filename string) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		// t.Log(scanner.Text())
-		tokens := strings.Split(scanner.Text(), " - ")
-		if len(tokens) != 5 {
-			log.Printf("error parsing tokens from %s\r\n", scanner.Text())
-			return
-		}
-
 		var info model.UserInfo
-		for _, token := range tokens {
-			ts := strings.Split(token, ": ")
-			if len(ts) != 2 {
-				log.Printf("error parsing ts from %s\r\n", token)
-				return
-			}
+		meta := scanner.Text()
 
-			switch ts[0] {
-			case "Email":
-				info.Email = strings.ToLower(ts[1])
-			case "Name":
-				info.Name = ts[1]
-			case "ScreenName":
-				info.ScreenName = ts[1]
-			case "Created At":
-				info.CreatedAt = ParserubyTimeToTimeStamp(ts[1])
-			}
+		emailIndex := strings.Index(meta, EmailToken)
+		nameIndex := strings.Index(meta, NameToken)
+		screenNameIndex := strings.Index(meta, ScreenNameToken)
+		followersIndex := strings.Index(meta, FollowersToken)
+		createdIndex := strings.Index(meta, CreatedToken)
+
+		if emailIndex == -1 || nameIndex == -1 || screenNameIndex == -1 || followersIndex == -1 || createdIndex == -1 {
+			log.Println(meta, emailIndex, nameIndex, screenNameIndex, followersIndex, createdIndex)
+			continue
 		}
+
+		info.Email = meta[emailIndex+len(EmailToken) : nameIndex]
+		info.Name = meta[nameIndex+len(NameToken) : screenNameIndex]
+		info.ScreenName = meta[screenNameIndex+len(ScreenNameToken) : followersIndex]
+		info.CreatedAt = ParserubyTimeToTimeStamp(meta[createdIndex+len(CreatedToken):])
+
 		info.Token = info.GetToken()
 		r.send(&info)
 	}

@@ -8,6 +8,7 @@ import (
 	"github.com/lnk2005/td_read/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func GetDb(index int) *gorm.DB {
@@ -19,7 +20,9 @@ func GetDb(index int) *gorm.DB {
 		model.GlobalConfig.Postgres.Pass,
 		strings.Join([]string{"info", strconv.FormatInt(int64(index), 10)}, "_"))
 
-	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		panic(err)
 	}

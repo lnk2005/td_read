@@ -1,6 +1,8 @@
 package infowriter
 
 import (
+	"time"
+
 	"github.com/lnk2005/td_read/global"
 	"github.com/lnk2005/td_read/model"
 	"gorm.io/gorm"
@@ -12,11 +14,12 @@ type InfoWriter struct {
 }
 
 func (w *InfoWriter) write(info *model.UserInfo) {
-	w.DB.AutoMigrate(info)
 	w.DB.Create(info)
 }
 
 func (w *InfoWriter) Run() {
+	w.DB.AutoMigrate(&model.UserInfo{})
+	time.Sleep(time.Second * 5)
 	for {
 		for info := range *w.Source {
 			w.write(info)

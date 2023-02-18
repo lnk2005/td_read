@@ -28,30 +28,21 @@ func TestTxtReader(t *testing.T) {
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			t.Log(scanner.Text())
-			tokens := strings.Split(scanner.Text(), " - ")
-			if len(tokens) != 5 {
-				t.Fatalf("error parsing tokens from %s", scanner.Text())
-			}
 
 			var info model.UserInfo
-			for _, token := range tokens {
-				ts := strings.Split(token, ": ")
-				if len(ts) != 2 {
-					t.Fatalf("error parsing ts from %s", token)
-					break
-				}
+			meta := scanner.Text()
 
-				switch ts[0] {
-				case "Email":
-					info.Email = strings.ToLower(ts[1])
-				case "Name":
-					info.Name = ts[1]
-				case "ScreenName":
-					info.ScreenName = ts[1]
-				case "Created At":
-					info.CreatedAt = txtreader.ParserubyTimeToTimeStamp(ts[1])
-				}
-			}
+			emailIndex := strings.Index(meta, txtreader.EmailToken)
+			nameIndex := strings.Index(meta, txtreader.NameToken)
+			screenNameIndex := strings.Index(meta, txtreader.ScreenNameToken)
+			followersIndex := strings.Index(meta, txtreader.FollowersToken)
+			createdIndex := strings.Index(meta, txtreader.CreatedToken)
+
+			info.Email = meta[emailIndex+len(txtreader.EmailToken) : nameIndex]
+			info.Name = meta[nameIndex+len(txtreader.NameToken) : screenNameIndex]
+			info.ScreenName = meta[screenNameIndex+len(txtreader.ScreenNameToken) : followersIndex]
+			info.CreatedAt = txtreader.ParserubyTimeToTimeStamp(meta[createdIndex+len(txtreader.CreatedToken):])
+
 			info.Token = info.GetToken()
 			t.Logf("%+v", info)
 
