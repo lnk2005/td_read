@@ -28,7 +28,7 @@ var runCmd = &cobra.Command{
 			panic(err)
 		}
 
-		fc := make(chan string, 100)
+		fc := make(chan string, 400)
 
 		wc := make([]*chan *model.UserInfo, global.WRITER_NUM)
 		for i := 0; i < global.WRITER_NUM; i++ {

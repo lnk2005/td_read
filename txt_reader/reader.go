@@ -61,7 +61,7 @@ func (r *Reader) Read(filename string) {
 			continue
 		}
 
-		info.Email = meta[emailIndex+len(EmailToken) : nameIndex]
+		info.Email = strings.ToLower(meta[emailIndex+len(EmailToken) : nameIndex])
 		info.Name = meta[nameIndex+len(NameToken) : screenNameIndex]
 		info.ScreenName = meta[screenNameIndex+len(ScreenNameToken) : followersIndex]
 		info.CreatedAt = ParserubyTimeToTimeStamp(meta[createdIndex+len(CreatedToken):])

@@ -3,6 +3,7 @@ package model
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"strconv"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ type UserInfo struct {
 }
 
 func (u *UserInfo) GetToken() string {
-	raw := []byte(strings.Join([]string{u.Email, u.Name}, "-"))
+	raw := []byte(strings.Join([]string{u.Email, u.ScreenName, strconv.FormatInt(u.CreatedAt, 10)}, "-"))
 	h := md5.Sum(raw)
 	return hex.EncodeToString(h[:])
 }
