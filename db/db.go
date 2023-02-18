@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lnk2005/td_read/global"
 	"github.com/lnk2005/td_read/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ func GetDb(index int) *gorm.DB {
 		model.GlobalConfig.Postgres.Port,
 		model.GlobalConfig.Postgres.User,
 		model.GlobalConfig.Postgres.Pass,
-		strings.Join([]string{"info", strconv.FormatInt(int64(index), 10)}, "_"))
+		strings.Join([]string{global.DB_BASE_NAME, strconv.FormatInt(int64(index), 10)}, "_"))
 
 	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),

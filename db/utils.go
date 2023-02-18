@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/lnk2005/td_read/global"
 	"github.com/lnk2005/td_read/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,7 +13,6 @@ import (
 
 var (
 	db_token = "abcdefghijklmnopqrstuvwxyz0123456789"
-	index    = 6
 )
 
 func CreateTables() error {
@@ -29,8 +29,8 @@ func CreateTables() error {
 	}()
 
 	// 实际建库 + 1，用于处理异常情况，虽然可能性几乎没有
-	for i := 0; i < index; i++ {
-		createDatabaseCommand := fmt.Sprintf("CREATE DATABASE %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
+	for i := 0; i <= global.INDEX; i++ {
+		createDatabaseCommand := fmt.Sprintf("CREATE DATABASE %s", strings.Join([]string{global.DB_BASE_NAME, strconv.FormatInt(int64(i), 10)}, "_"))
 		DB.Exec(createDatabaseCommand)
 	}
 
@@ -44,8 +44,8 @@ func CheckTables() error {
 func GetDbIndex(meta string) int {
 	sub := meta[0:1]
 	if strings.Contains(db_token, sub) {
-		return strings.Index(db_token, sub) % 6
+		return strings.Index(db_token, sub) % global.INDEX
 	}
 
-	return 6
+	return global.INDEX
 }

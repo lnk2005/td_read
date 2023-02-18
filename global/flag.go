@@ -5,8 +5,10 @@ import (
 )
 
 const (
-	READER_NUM = 100
-	WRITER_NUM = 6
+	READER_NUM   = 100
+	INDEX        = 9
+	WRITER_NUM   = 9
+	DB_BASE_NAME = "info_new" // 结尾不加 "_"
 )
 
 var (

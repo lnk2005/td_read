@@ -56,8 +56,8 @@ var runCmd = &cobra.Command{
 		}
 
 		for i := 0; i < global.WRITER_NUM; i++ {
-			wg.Add(5)
-			for j := 0; j < 5; j++ {
+			wg.Add(3)
+			for j := 0; j < 3; j++ {
 				go func(index int) {
 					db := db.GetDb(index)
 					w := infowriter.NewInfoWriter(wc[index], db)
