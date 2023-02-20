@@ -42,7 +42,10 @@ func (r *Reader) Read(filename string) {
 		log.Println(err)
 		return
 	}
-	defer f.Close()
+	defer func() {
+		f.Close()
+		os.Remove(filename)
+	}()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

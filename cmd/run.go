@@ -22,21 +22,28 @@ var runCmd = &cobra.Command{
 	Short: "run the reader to read data into database",
 	Long:  `run the reader to read data into database`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		basePath := "/data/"
+		basePath := "/data-2/"
 		files, err := os.ReadDir(basePath)
 		if err != nil {
 			panic(err)
 		}
 
+		var wg sync.WaitGroup
+
 		fc := make(chan string, 400)
 
-		wc := make([]*chan *model.UserInfo, global.WRITER_NUM)
-		for i := 0; i < global.WRITER_NUM; i++ {
+		wc := make([]*chan *model.UserInfo, len(global.DB_TOKEN))
+		for i := 0; i < len(global.DB_TOKEN); i++ {
 			v := make(chan *model.UserInfo, 100)
 			wc[i] = &v
+			wg.Add(1)
+			go func(index int) {
+				db := db.GetDb(index)
+				w := infowriter.NewInfoWriter(wc[index], db)
+				w.Run()
+				wg.Done()
+			}(i)
 		}
-
-		var wg sync.WaitGroup
 
 		wg.Add(1)
 		go func() {
@@ -55,21 +62,9 @@ var runCmd = &cobra.Command{
 			}()
 		}
 
-		for i := 0; i < global.WRITER_NUM; i++ {
-			wg.Add(3)
-			for j := 0; j < 3; j++ {
-				go func(index int) {
-					db := db.GetDb(index)
-					w := infowriter.NewInfoWriter(wc[index], db)
-					w.Run()
-					wg.Done()
-				}(i)
-			}
-		}
-
 		wg.Wait()
 		close(fc)
-		for i := 0; i < global.WRITER_NUM; i++ {
+		for i := 0; i < len(global.DB_TOKEN); i++ {
 			close(*wc[i])
 		}
 		return nil

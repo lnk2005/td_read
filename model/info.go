@@ -12,7 +12,7 @@ type UserInfo struct {
 	Name       string `json:"name" gorm:"name"`
 	ScreenName string `json:"screen_name" gorm:"screen_name"`
 	CreatedAt  int64  `json:"created_at" gorm:"created_at"`
-	Token      string `json:"token" gorm:"token,primaryKey"`
+	Token      string `json:"token" gorm:"token; primary_key"`
 }
 
 func (u *UserInfo) GetToken() string {

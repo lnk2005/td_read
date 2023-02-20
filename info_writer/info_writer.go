@@ -6,6 +6,7 @@ import (
 	"github.com/lnk2005/td_read/global"
 	"github.com/lnk2005/td_read/model"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type InfoWriter struct {
@@ -13,21 +14,37 @@ type InfoWriter struct {
 	DB     *gorm.DB
 }
 
-func (w *InfoWriter) write(info *model.UserInfo) {
-	w.DB.Create(info)
+func (w *InfoWriter) write(info *[]*model.UserInfo) {
+	w.DB.Clauses(clause.OnConflict{DoNothing: true}).Create(info)
 }
 
 func (w *InfoWriter) Run() {
 	w.DB.AutoMigrate(&model.UserInfo{})
-	time.Sleep(time.Second * 5)
+
+	infoSet := make([]*model.UserInfo, 1000)
+	index := 0
+
+	time.Sleep(time.Second * 10)
 	for {
+
 		for info := range *w.Source {
-			w.write(info)
+			if index == 1000 {
+				w.write(&infoSet)
+				infoSet = make([]*model.UserInfo, 1000)
+				index = 0
+			}
+
+			infoSet[index] = info
+			index += 1
 		}
 
 		if global.READER_EXIT_FLAG.Load() == global.READER_NUM {
 			break
 		}
+	}
+
+	if index != 0 {
+		w.write(&infoSet)
 	}
 }
 

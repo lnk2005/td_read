@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/lnk2005/td_read/global"
 	"github.com/lnk2005/td_read/model"
 	homedir "github.com/mitchellh/go-homedir"
 	"gorm.io/driver/postgres"
@@ -38,13 +39,27 @@ func TestDropDatabase(t *testing.T) {
 		Pass: "mysecretpassword",
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
+	dsn := fmt.Sprintf("host=%s     port=%s  user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
 	DB, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	for i := 0; i <= 6; i++ {
+	for i := 0; i < len(global.DB_TOKEN); i++ {
 		createDatabaseCommand := fmt.Sprintf("DROP DATABASE IF EXISTS %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
 		DB.Exec(createDatabaseCommand)
 	}
+}
+
+func TestCreateTable(t *testing.T) {
+	config := model.DbConfig{
+		Host: "127.0.0.1",
+		Port: "5432",
+		User: "postgres",
+		Pass: "mysecretpassword",
+	}
+
+	dsn := fmt.Sprintf("host=%s    port=%s  user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass, "info_0")
+	DB, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	DB.AutoMigrate(&model.UserInfo{})
 }
 
 func TestHomeDir(t *testing.T) {
