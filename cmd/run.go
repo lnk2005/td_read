@@ -32,9 +32,9 @@ var runCmd = &cobra.Command{
 
 		fc := make(chan string, 400)
 
-		wc := make([]*chan *model.UserInfo, len(global.DB_TOKEN))
+		wc := make([]*chan *model.UserInfoTmp, len(global.DB_TOKEN))
 		for i := 0; i < len(global.DB_TOKEN); i++ {
-			v := make(chan *model.UserInfo, 100)
+			v := make(chan *model.UserInfoTmp, 10000)
 			wc[i] = &v
 			wg.Add(1)
 			go func(index int) {

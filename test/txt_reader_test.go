@@ -43,7 +43,7 @@ func TestTxtReader(t *testing.T) {
 			info.ScreenName = meta[screenNameIndex+len(txtreader.ScreenNameToken) : followersIndex]
 			info.CreatedAt = txtreader.ParserubyTimeToTimeStamp(meta[createdIndex+len(txtreader.CreatedToken):])
 
-			info.Token = info.GetToken()
+			// info.Token = info.GetToken()
 			t.Logf("%+v", info)
 
 			break

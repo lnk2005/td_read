@@ -22,7 +22,7 @@ var (
 
 type Reader struct {
 	Source *chan string
-	Send   []*chan *model.UserInfo
+	Send   []*chan *model.UserInfoTmp
 }
 
 func (r *Reader) Run() {
@@ -44,12 +44,11 @@ func (r *Reader) Read(filename string) {
 	}
 	defer func() {
 		f.Close()
-		os.Remove(filename)
+		// os.Remove(filename)
 	}()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		// t.Log(scanner.Text())
 		var info model.UserInfo
 		meta := scanner.Text()
 
@@ -69,8 +68,12 @@ func (r *Reader) Read(filename string) {
 		info.ScreenName = meta[screenNameIndex+len(ScreenNameToken) : followersIndex]
 		info.CreatedAt = ParserubyTimeToTimeStamp(meta[createdIndex+len(CreatedToken):])
 
-		info.Token = info.GetToken()
-		r.send(&info)
+		infoTmp := model.UserInfoTmp{
+			Info:  info,
+			Token: info.GetToken(),
+		}
+
+		r.send(&infoTmp)
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -78,7 +81,7 @@ func (r *Reader) Read(filename string) {
 	}
 }
 
-func (r *Reader) send(info *model.UserInfo) {
+func (r *Reader) send(info *model.UserInfoTmp) {
 	index := db.GetDbIndex(info.Token)
 	(*r.Send[index]) <- info
 }
@@ -92,7 +95,7 @@ func ParserubyTimeToTimeStamp(rbt string) int64 {
 	return t.Unix()
 }
 
-func NewReader(source *chan string, send []*chan *model.UserInfo) *Reader {
+func NewReader(source *chan string, send []*chan *model.UserInfoTmp) *Reader {
 	return &Reader{
 		Source: source,
 		Send:   send,

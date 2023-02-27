@@ -39,11 +39,11 @@ func TestDropDatabase(t *testing.T) {
 		Pass: "mysecretpassword",
 	}
 
-	dsn := fmt.Sprintf("host=%s     port=%s  user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
+	dsn := fmt.Sprintf("host=%s  port=%s  user=%s password=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass)
 	DB, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	for i := 0; i < len(global.DB_TOKEN); i++ {
-		createDatabaseCommand := fmt.Sprintf("DROP DATABASE IF EXISTS %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
+		createDatabaseCommand := fmt.Sprintf("TRUNCATE DATABASE %s", strings.Join([]string{"info", strconv.FormatInt(int64(i), 10)}, "_"))
 		DB.Exec(createDatabaseCommand)
 	}
 }

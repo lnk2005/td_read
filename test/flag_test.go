@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/lnk2005/td_read/global"
@@ -17,4 +18,9 @@ func TestAtomicInt32(t *testing.T) {
 func TestCreatChan(t *testing.T) {
 	wc := make([]*chan *model.UserInfo, 6)
 	t.Logf("%+v", wc)
+}
+
+func TestMap(t *testing.T) {
+	tokenSet := make(map[string]bool, 10000)
+	t.Log(fmt.Printf("%+v", tokenSet))
 }

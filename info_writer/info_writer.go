@@ -10,7 +10,7 @@ import (
 )
 
 type InfoWriter struct {
-	Source *chan *model.UserInfo
+	Source *chan *model.UserInfoTmp
 	DB     *gorm.DB
 }
 
@@ -19,6 +19,8 @@ func (w *InfoWriter) write(info *[]*model.UserInfo) {
 }
 
 func (w *InfoWriter) Run() {
+	tokenSet := make(map[string]bool)
+
 	w.DB.AutoMigrate(&model.UserInfo{})
 
 	infoSet := make([]*model.UserInfo, 1000)
@@ -27,14 +29,20 @@ func (w *InfoWriter) Run() {
 	time.Sleep(time.Second * 10)
 	for {
 
-		for info := range *w.Source {
+		for infoTmp := range *w.Source {
+			if _, ok := tokenSet[infoTmp.Token]; ok {
+				continue
+			} else {
+				tokenSet[infoTmp.Token] = true
+			}
+
 			if index == 1000 {
 				w.write(&infoSet)
 				infoSet = make([]*model.UserInfo, 1000)
 				index = 0
 			}
 
-			infoSet[index] = info
+			infoSet[index] = &infoTmp.Info
 			index += 1
 		}
 
@@ -48,7 +56,7 @@ func (w *InfoWriter) Run() {
 	}
 }
 
-func NewInfoWriter(source *chan *model.UserInfo, db *gorm.DB) *InfoWriter {
+func NewInfoWriter(source *chan *model.UserInfoTmp, db *gorm.DB) *InfoWriter {
 	return &InfoWriter{
 		Source: source,
 		DB:     db,

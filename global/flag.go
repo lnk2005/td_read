@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	READER_NUM   = 100
+	READER_NUM   = 50
 	INDEX        = 9
 	WRITER_NUM   = 9
 	DB_BASE_NAME = "info" // 结尾不加 "_"
